@@ -1,10 +1,11 @@
-<H3>Name</H3>
-<H3>Register no.</H3>
-<H3>Date</H3>
+### Name: Naveen Kumar V
+### Register no: 212223230140
+### Date: 18/05/26
 <H3>Experiment No. 2 </H3>
+
 ## Implementation of Perceptron for Binary Classification
-# AIM:
-To implement a perceptron for classification using Python<BR>
+# AIM: 
+To implement a perceptron for classification using Python
 
 # EQUIPMENTS REQUIRED:
 Hardware – PCs
@@ -49,11 +50,104 @@ STEP 9:For ‘N ‘ iterations ,do the following:<BR>
 STEP 10:Plot the error for each iteration <BR>
 STEP 11:Print the accuracy<BR>
 # PROGRAM:
-    ''' Insert your code here '''
+```py
+# Write a class for perceptron with fit and predict function with sigmoid activation function
+class Perceptron:
+ def __init__(self,learning_rate=0.1):
+     self.learning_rate = learning_rate
+     self._b = 0.0  #y-intercept
+     self._w = None # weights assigned to input features
+     self.misclassified_samples = []
+ def fit(self, x: np.array, y: np.array, n_iter=10):
+     self._b = 0.0
+     self._w = np.zeros(x.shape[1])
+     self.misclassified_samples = []
+     for _ in range(n_iter):
+         # counter of the errors during this training interaction
+         errors = 0
+         for xi, yi in zip(x,y):
+             update = self.learning_rate * (yi - self.predict(xi))
+             self._b += update
+             self._w += update * xi
+             errors += int(update != 0.0)
+         self.misclassified_samples.append(errors)
+ def f(self, x: np.array) -> float:
+     return np.dot(x, self._w) + self._b
+ def predict(self, x: np.array):
+     return np.where(self.f(x) >= 0,1,-1)
+```
+
+```py
+# Start your main here ,read the iris data set
+df = pd.read_csv('IRIS.csv')
+print(df.head())
+# extract the label column 
+y=df.iloc[:,4].values
+# extract features 
+x=df.iloc[:,0:3].values
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+ax.set_title('Iris data set')
+ax.set_xlabel("Sepal length in width (cm)")
+ax.set_ylabel("Sepal width in width (cm)")
+ax.set_zlabel("Petal length in width (cm)")
+ax.scatter(x[:50, 0], x[:50, 1], x[:50, 2], color='red',
+         marker='o', s=4, edgecolor='red', label="Iris Setosa")
+ax.scatter(x[50:100, 0], x[50:100, 1], x[50:100, 2], color='blue',
+         marker='^', s=4, edgecolor='blue', label="Iris Versicolour")
+ax.scatter(x[100:150, 0], x[100:150, 1], x[100:150, 2], color='green',
+         marker='x', s=4, edgecolor='green', label="Iris Virginica")
+plt.legend(loc='upper left')
+plt.show()
+
+x = x[0:100, 0:2]
+y=y[0:100]
+plt.scatter(x[:50,0],x[:50,1],color='red',marker='o',label='Setosa')
+plt.scatter(x[50:100,0],x[50:100,1],color='blue',marker='x',label='Versicolor')
+
+plt.xlabel('Sepal length')
+plt.ylabel('Sepal width')
+plt.legend(loc='upper left')
+plt.show()
+```
+
+```py
+# map the labels to a binary integer value
+y = np.where(y == 'Iris-setsa', 1, -1)
+
+# standardization of the input features
+x[:,0] = (x[:,0] - x[:,0].mean()) / x[:,0].std()
+x[:,1] = (x[:,1] - x[:,1].mean()) / x[:,1].std()
+
+# split the data
+x_train,x_test,y_train,y_test= train_test_split(x,y,test_size=0.25,random_state=0)
+
+# train the model by setting the learning rate as 0.01
+classifier = Perceptron(learning_rate=0.01)
+classifier.fit(x_train,y_train)
+
+# plot the number of errors during each iteration
+plt.plot(range(1,len(classifier.misclassified_samples)+1),classifier.misclassified_samples,marker='o')
+plt.xlabel('Epochs')
+plt.ylabel('Errors')
+plt.show()
+
+# print the accuracy
+print("\naccuracy : ",accuracy_score(classifier.predict(x_test),y_test)*100)
+```
 
 # OUTPUT:
 
-    ''' Show your result '''
+<img width="683" height="131" alt="image" src="https://github.com/user-attachments/assets/17f05456-a19c-4e38-8edb-09cc9723d913" />
+
+<img width="532" height="540" alt="image" src="https://github.com/user-attachments/assets/51c89e45-c2e9-4c60-abd4-2c32011b1d00" />
+
+<img width="723" height="546" alt="image" src="https://github.com/user-attachments/assets/d92c8ce1-501f-4464-a501-171688a2d5de" />
+
+<img width="733" height="546" alt="image" src="https://github.com/user-attachments/assets/f5d829b9-10c5-4c00-a31f-e523c3021e7b" /><br>
+
+<img width="173" height="45" alt="image" src="https://github.com/user-attachments/assets/a6baab15-7729-47fd-9e9c-1a83b779b514" />
+
 
 # RESULT:
  Thus, a single layer perceptron model is implemented using python to classify Iris data set.
